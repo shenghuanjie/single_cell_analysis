@@ -15,9 +15,9 @@ TPM stands for Transcripts Per Million. If you want to know more about RNA-seq d
 
 ### Set up the environment
 
-#### Softwares to be installed
+#### Software to be installed
 
-- Install miniconda
+- miniconda
 - Jupyter notebook
 - R
 - RStudio
