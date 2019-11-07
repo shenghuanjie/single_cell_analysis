@@ -1,0 +1,57 @@
+---
+title: "single_cell_analysis"
+author: "Huanjie Sheng"
+date: "November 6, 2019"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message=FALSE)
+library(tidyverse)
+library(Seurat)
+library(data.table)
+```
+
+## Load Data
+It takes too long to run on the entire dataset, I just slice out the LT_young cells to show a demo
+```{r load data}
+raw_counts.org <- fread("data/GSE100426_SC_counts.txt.gz", sep="\t")
+gene.names <- raw_counts.org$V1
+raw_counts <- raw_counts.org[, colnames(raw_counts.org) %like% "LT_young", with=FALSE]
+raw_counts <- as.data.frame(raw_counts)
+rownames(raw_counts) <- gene.names
+```
+
+```{r convert}
+mydata <- CreateSeuratObject(raw_counts, min.cells = 3, min.features = 200, project = "mann_cellreport_2018_scRNAseq")
+```
+
+We need to add some feautres to the data
+```{r add_feature}
+nostim <- grepl("nostim", names(Idents(mydata)))
+condition <- factor(nostim, levels=c(T, F), labels=c("nostim", "stim"))
+mydata@meta.data$stim <- as.character(condition)
+Idents(mydata) <- condition
+```
+
+## Integrate conditions againg
+This is too slow, not done here
+```{r integrate}
+# mydata.list <- SplitObject(mydata, split.by = "stim")
+# ifnb.list <- lapply(X = ifnb.list, FUN = function(x) {
+#     x <- NormalizeData(x)
+#     x <- FindVariableFeatures(x, selection.method = "vst", nfeatures = 2000)
+# })
+# mydata.anchors <- FindIntegrationAnchors(object.list = mydata.list, dims = 1:20)
+# mydata.combined <- IntegrateData(anchorset = mydata.list, dims = 1:20)
+```
+
+## Find differentially expressed markers
+
+```{r pressure}
+# Seurat:::FindMarkers.default()
+cluster1.markers <- FindMarkers(mydata, ident.1 = "nostim", ident.2 = "stim", min.pct = 0.25)
+head(cluster1.markers, n = 5)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
