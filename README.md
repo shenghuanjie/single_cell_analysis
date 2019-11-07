@@ -15,11 +15,18 @@ TPM stands for Transcripts Per Million. If you want to know more about RNA-seq d
 
 ### Set up the environment
 
-#### Install miniconda
+#### Softwares to be installed
 
-Instruction can be found [here](https://docs.conda.io/en/latest/miniconda.html)
+- Install miniconda
+- Jupyter notebook
+- R
+- RStudio
+
+> How to do the installation? Help yourself and just Google it!
+This is the single most important thing that you can get started on data analysis and coding: learn how to Google.
 
 #### Prepare the working environment
+
 
 You will need several packages including:
 
