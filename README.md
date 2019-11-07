@@ -24,17 +24,23 @@ Instruction can be found [here](https://docs.conda.io/en/latest/miniconda.html)
 You will need several packages including:
 
 - scanpy
+- tensorflow
+- diffxpy
 - numpy
 - scipy
 - pandas
 
+Here are the R packages you need
+- tidyverse
+- data.table
+- Seurat
+
 
 ### Process the data
-Please check out the Jupyter notebook `mann_cellreport_2018_sc.ipyhb`
-
+- Please check out the Jupyter notebook `mann_cellreport_2018_sc.ipyhb`
+- And the Rmarkdown file `single_cell_analysis.Rmd`
 
 ## Some tutorials that might be helpful
 
 [Clustering 3K PBMCs](https://scanpy-tutorials.readthedocs.io/en/latest/pbmc3k.html)
 [CZ Biohub tutorial](https://github.com/theislab/scanpy-demo-czbiohub/blob/master/10X_PBMC.ipynb)
-
