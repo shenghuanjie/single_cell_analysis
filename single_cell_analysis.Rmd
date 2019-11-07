@@ -14,7 +14,7 @@ library(data.table)
 
 ## Load Data
 It takes too long to run on the entire dataset, I just slice out the LT_young cells to show a demo
-```{r load data}
+```{r load data, results='hide', message=FALSE, warning=FALSE}
 raw_counts.org <- fread("data/GSE100426_SC_counts.txt.gz", sep="\t")
 gene.names <- raw_counts.org$V1
 raw_counts <- raw_counts.org[, colnames(raw_counts.org) %like% "LT_young", with=FALSE]
@@ -24,6 +24,13 @@ rownames(raw_counts) <- gene.names
 
 ```{r convert}
 mydata <- CreateSeuratObject(raw_counts, min.cells = 3, min.features = 200, project = "mann_cellreport_2018_scRNAseq")
+```
+
+[OPTIONAL, but usually done]
+Well, there are debates on whether you should normalize your data before analysis or not.
+Normally, a lot of biologists still perform the normalization, but normalization removes some variance that is true between populations
+```{r normalization}
+mydata <- NormalizeData(mydata, normalization.method = "LogNormalize", scale.factor = 1e6)
 ```
 
 We need to add some feautres to the data
@@ -46,6 +53,24 @@ This is too slow, not done here
 # mydata.combined <- IntegrateData(anchorset = mydata.list, dims = 1:20)
 ```
 
+## Visualization
+Again, you can visualize your data in Seurat too
+```{r visualization, echo=FALSE}
+# Find variable features
+mydata <- FindVariableFeatures(mydata, selection.method = "vst", nfeatures = 2000)
+# Centralize your data
+mydata <- ScaleData(mydata, features = rownames(mydata))
+# Do PCA first
+mydata <- RunPCA(mydata, features = VariableFeatures(object = mydata))
+# If you haven't installed UMAP, you can do so via reticulate::py_install(packages =
+# 'umap-learn')
+mydata <- RunUMAP(mydata, dims = 1:10)
+# note that you can set `label = TRUE` or use the LabelClusters function to help label
+# individual clusters
+DimPlot(mydata, reduction = "umap")
+```
+
+
 ## Find differentially expressed markers
 
 ```{r pressure}
@@ -54,4 +79,11 @@ cluster1.markers <- FindMarkers(mydata, ident.1 = "nostim", ident.2 = "stim", mi
 head(cluster1.markers, n = 5)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+## Visualize these markers
+```{r showmarkers, echo=FALSE}
+VlnPlot(mydata, features = c("Cx3cl1", "Nfkb2"))
+```
+We can plot some of these genes on the same plot we had above
+```{r showmore, echo=FALSE}
+FeaturePlot(mydata, features = c("Cx3cl1", "Nfkb2"), reduction="umap")
+```
